@@ -74,13 +74,22 @@ describe 'The /payment_transactions endpoint' do
     end
 
     context 'succesfully create valid sale payment transaction' do 
-        before do 
+        before do
+            @response = SalePayment.new.create(@base_url, @sale_payload)
         end
 
         it 'returns the correct response code' do
+            expect(@response.code).to eq(200)
         end
 
         it 'returns the correct response body' do
+            results = JSON.parse(@response.body)
+            sendDate = Time.parse(results['transaction_time'])
+            expect(results['status']).to match 'approved'
+            expect(results['message']).to match 'Your transaction has been approved.'
+            expect(results['usage']).to match @sale_payment_object.usage
+            expect(results['amount']).to equal(@sale_payment_object.amount.to_i)
+            expect(sendDate.to_i).to be_within(3).of(Time.now.utc.to_i)
         end
     end
 
