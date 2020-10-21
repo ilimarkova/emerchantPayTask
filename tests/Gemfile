@@ -5,4 +5,5 @@ gem 'json'
 gem 'rspec'
 gem 'faker'
 gem 'json_expressions'
+gem 'require_all'
 
