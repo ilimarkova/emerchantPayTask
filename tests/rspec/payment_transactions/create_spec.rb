@@ -95,12 +95,30 @@ describe 'The /payment_transactions endpoint' do
 
     context 'succesfully create valid void payment transaction' do 
         before  do
+            sale_transaction_response = SalePayment.new.create(@base_url, @sale_payload)  
+            results = JSON.parse(sale_transaction_response)
+            void_payment_object = VoidPayment.new.populate_fields({reference_id: results['unique_id']})
+            void_payload =  { payment_transaction: 
+                {
+                    reference_id: void_payment_object.reference_id, 
+                    transaction_type: void_payment_object.type
+                }
+            }
+            @response = VoidPayment.new.create(@base_url, void_payload)  
         end
 
         it 'returns the correct response code' do
+            expect(@response.code).to eq(200)
         end
 
         it 'returns the correct response body' do
+            results = JSON.parse(@response.body)
+            sendDate = Time.parse(results['transaction_time'])
+            expect(results['status']).to match 'approved'
+            expect(results['message']).to match 'Your transaction has been voided successfully'
+            expect(results['usage']).to match @sale_payment_object.usage
+            expect(results['amount']).to equal(@sale_payment_object.amount.to_i)
+            expect(sendDate.to_i).to be_within(3).of(Time.now.utc.to_i)
         end
     end
 end
