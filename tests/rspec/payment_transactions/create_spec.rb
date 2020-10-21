@@ -51,12 +51,25 @@ describe 'The /payment_transactions endpoint' do
 
     context 'unsuccessfully create void payment transaction with invalid key' do
         before do
+            void_payment_object = VoidPayment.new.populate_fields({reference_id: 'fake id'})
+            void_payload =  { payment_transaction: 
+                {
+                    reference_id: void_payment_object.reference_id, 
+                    transaction_type: void_payment_object.type
+                }
+            }
+            @response = VoidPayment.new.create(@base_url, void_payload)
         end
 
         it 'returns the correct response code' do
+            expect(@response.code).to eq(422)
         end
 
         it 'returns the correct response body' do
+            errors = []
+            errors.push "Invalid reference transaction!"
+            results = JSON.parse(@response.body)
+            expect(results['reference_id']).to match errors
         end
     end
 
