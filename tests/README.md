@@ -7,7 +7,7 @@ Installation
 ============
 - Follow guide the following guide to setup product https://github.com/eMerchantPay/codemonsters_api_full 
 
-- Clone this current repository
+- Clone this repository https://github.com/ilimarkova/emerchantPayTask
 
 - Run bundle install from main directory to install used gems
 
