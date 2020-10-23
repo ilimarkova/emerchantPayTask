@@ -85,11 +85,11 @@ describe 'The /payment_transactions endpoint' do
         it 'returns the correct response body' do
             results = JSON.parse(@response.body)
             sendDate = Time.parse(results['transaction_time'])
-            expect(results['status']).to match 'approved'
-            expect(results['message']).to match 'Your transaction has been approved.'
-            expect(results['usage']).to match @sale_payment_object.usage
-            expect(results['amount']).to equal(@sale_payment_object.amount.to_i)
-            expect(sendDate.to_i).to be_within(3).of(Time.now.utc.to_i)
+            expect(results['status']).to eql('approved')
+            expect(results['message']).to eql('Your transaction has been approved.')
+            expect(results['usage']).to eql(@sale_payment_object.usage)
+            expect(results['amount']).to eql(@sale_payment_object.amount.to_i)
+            expect(sendDate.to_i).to equal(Time.now.utc.to_i)
         end
     end
 
@@ -114,11 +114,12 @@ describe 'The /payment_transactions endpoint' do
         it 'returns the correct response body' do
             results = JSON.parse(@response.body)
             sendDate = Time.parse(results['transaction_time'])
-            expect(results['status']).to match 'approved'
-            expect(results['message']).to match 'Your transaction has been voided successfully'
-            expect(results['usage']).to match @sale_payment_object.usage
-            expect(results['amount']).to equal(@sale_payment_object.amount.to_i)
-            expect(sendDate.to_i).to be_within(3).of(Time.now.utc.to_i)
+            expect(results['unique_id']).not_to be_empty
+            expect(results['status']).to eql('approved')
+            expect(results['message']).to eql('Your transaction has been voided successfully')
+            expect(results['usage']).to eql(@sale_payment_object.usage)
+            expect(results['amount']).to eql(@sale_payment_object.amount.to_i)
+            expect(sendDate.to_i).to equal(Time.now.utc.to_i)
         end
     end
 end
